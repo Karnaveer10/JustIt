@@ -1,0 +1,113 @@
+type_name,type_canonical,is_commercial
+3451,itr-state (ind. trib. ref.),False
+3452,money suit  t,True
+3619,letters of administration,False
+3671,original (title/partition/money) suit,True
+3688,original suit/hm,True
+3692,m a ulp restoration,False
+3983,money suit,True
+3984,money suit  t,True
+4181,misc ( lett. of admin.)case,False
+4252,original (title/partition/money) suit,True
+4270,resto. of suits,True
+4274,misc. civil appeal (dj  adj),False
+4280,"restoration of suits 0-9 r-4 , 0-9 , r -9",True
+4366,misc. (letter of administration),False
+4367,money suit  t,True
+4370,money suit h a,True
+4465,misc. civil cases for dj and adj,False
+4479,misc. civil appeal for dj ampadj,False
+4552,prevention cruelty animal act,False
+4553,money suit  t,True
+4555,money suit h a,True
+4570,moter accident claim tribunal,False
+4571,money suit  t,True
+4573,misc. recovery (pga),True
+4575,motor accident claim tribunal,False
+4623,misc.rent control cases,True
+4626,original (title/partition/money) suit,True
+4646,original suit/hm,True
+4650,n d p s case ( summary trial),False
+4681,narcotic drugs / psychotropic act,False
+4689,miscellneous case u/s 125(3),False
+4710,"misjoinder & non joinder -0-1 , r-9",False
+4711,money suit  t,True
+4716,money suit h a,True
+4742,ni act chq bounce,True
+4743,money suit  t,True
+4746,money suit h a,True
+4766,motar vehicle act.,False
+4780,motor transport workers act,False
+4781,partion suit  title partion suit,True
+4782,partion suit / title partion,True
+4783,partion suit / title partion suit,True
+4784,partion suit / title partion suit(civil),True
+4788,money suit h a,True
+4826,original (title/partition/money) suit,True
+4844,original suit/hm,True
+4848,national drugs  psycotropic act,False
+4852,original (title/partition/money) suit,True
+4877,rent miscellaneous,True
+4906,police cases h,False
+4932,prc (police report case),False
+4974,suit for decl. and mand. inj.,True
+5003,original (title/partition/money) suit,True
+5006,partion suit / title partion suit,True
+5026,suit for permanent injuction,True
+5031,suit for permenant inj,True
+5043,original (title/partition/money) suit,True
+5054,suit for recovery,True
+5065,suit for specific performance,True
+5070,suit fr dissolutn,True
+5072,original (title/partition/money) suit,True
+5073,original (title/partition/money) suit,True
+5088,original money suit,True
+5094,original suit(mts),True
+5097,original suit.,True
+5098,original suit/hm,True
+5103,petition us 127 of cr.pc,False
+5433,probate case 108,False
+5591,reco33c 1 lc,False
+5705,suit for mandatory injunction(civil),True
+5757,suit for recovery,True
+5798,rev. of probate case,False
+5806,special criminal case (under electricity act.)2003,False
+6084,special( n d p s),False
+6185,suit for declaration and manda,True
+6216,suit for mandatory injunction(civil),True
+6274,suit for recovery,True
+6321,special criminal case (under p.c. act.)1988,False
+6331,special criminal cases (under sc st act)1989,False
+6350,special criminal case under the pocso act.,False
+6427,suit for damages,True
+6475,suit for mandatory injunction(civil),True
+6533,suit for ejechment,True
+6551,suit for mandatory injunction(civil),True
+6582,suit for permnt and mand. inj,True
+6592,suit for possession of propert,True
+6602,suit for recovery,True
+6652,t. ev. suit,True
+6661,spl.sum.suit,True
+6663,summary suit,True
+6707,sucession certificate case,False
+6748,"withdrawal of suits 0-23 , r1",True
+6769,"suit for declaration, partition, possession and pe",True
+6793,suit for mandatory injunction(civil),True
+6839,suit for decl. for per prohibitory inj.,True
+6851,suit for declaration and mandatory injunction,True
+6888,suit for mandatory injunction(civil),True
+6894,suit for dissolution of marria,True
+6901,suit for partition with per. inj,True
+6912,suit for specific performance,True
+6914,suit for temparory and perpetual injuction,True
+6948,suit for permanent proh. injun,True
+6957,suit for permenent inj,True
+6959,suit for recovery of money,True
+6986,suit fr partion and  prmannt inj,True
+7014,suit fr dissolutn,True
+7029,suit perpctualand mn,True
+7043,summons for judgement,False
+7053,the special criminal case under the pocso act.,False
+7057,summary suit,True
+7131,title execution civ,False
+7432,warrant case,False

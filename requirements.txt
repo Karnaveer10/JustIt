@@ -1,0 +1,22 @@
+# Data Science & Modeling
+pandas
+numpy
+scikit-learn
+xgboost
+
+
+# Explainability
+shap
+
+# API Serving
+bentoml
+pydantic
+
+# MLOps & Orchestration
+apache-airflow
+evidently
+requests
+beautifulsoup4
+
+# Jupyter Integration
+ipykernel

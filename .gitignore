@@ -1,0 +1,7 @@
+.venv/
+csv/
+data/raw/
+data/processed/
+*.tar.gz
+__pycache__/
+*.pyc
