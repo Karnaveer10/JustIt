@@ -1,0 +1,5 @@
+outs:
+- md5: 49738990e32c00d44a22c8e18e0bc2fd
+  size: 54603188
+  hash: md5
+  path: df_model.csv
