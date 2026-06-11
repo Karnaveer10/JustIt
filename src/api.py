@@ -6,17 +6,23 @@ import pandas as pd
 import numpy as np
 
 # ── Load models once at startup ───────────────────────────
-m1 = joblib.load(r'C:\Users\Karnaveer Singh\Justice_Hq\models\stage1_binary.pkl')
-m2 = joblib.load(r'C:\Users\Karnaveer Singh\Justice_Hq\models\stage2_medium_long.pkl')
-le_y1 = joblib.load(r'C:\Users\Karnaveer Singh\Justice_Hq\models\le_stage1.pkl')
-le_y2 = joblib.load(r'C:\Users\Karnaveer Singh\Justice_Hq\models\le_stage2.pkl')
-encoders = joblib.load(r'C:\Users\Karnaveer Singh\Justice_Hq\models\feature_encoders.pkl')
-explainer = joblib.load(r'C:\Users\Karnaveer Singh\Justice_Hq\models\shap_explainer.pkl')
-state_map = joblib.load(r'C:\Users\Karnaveer Singh\Justice_Hq\models\state_map.pkl')
-type_map = joblib.load(r'C:\Users\Karnaveer Singh\Justice_Hq\models\type_map.pkl')
+import os
 
-# ── Load lookup tables ────────────────────────────────────
-court_lookup = pd.read_csv(r'C:\Users\Karnaveer Singh\Justice_Hq\data\lookups\court_lookup.csv')
+# Base directory — works both locally and in Docker
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Models
+m1 = joblib.load(os.path.join(BASE_DIR, 'models', 'stage1_binary.pkl'))
+m2 = joblib.load(os.path.join(BASE_DIR, 'models', 'stage2_medium_long.pkl'))
+le_y1 = joblib.load(os.path.join(BASE_DIR, 'models', 'le_stage1.pkl'))
+le_y2 = joblib.load(os.path.join(BASE_DIR, 'models', 'le_stage2.pkl'))
+encoders = joblib.load(os.path.join(BASE_DIR, 'models', 'feature_encoders.pkl'))
+explainer = joblib.load(os.path.join(BASE_DIR, 'models', 'shap_explainer.pkl'))
+state_map = joblib.load(os.path.join(BASE_DIR, 'models', 'state_map.pkl'))
+type_map = joblib.load(os.path.join(BASE_DIR, 'models', 'type_map.pkl'))
+
+# Lookups
+court_lookup = pd.read_csv(os.path.join(BASE_DIR, 'data', 'lookups', 'court_lookup.csv'))
 court_lookup = court_lookup.set_index(['state_code', 'dist_code', 'court_no'])
 
 GLOBAL_MEDIAN = 293.0

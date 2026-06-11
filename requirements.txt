@@ -1,24 +1,24 @@
-# Data Science & Modeling
-pandas
-numpy
-scikit-learn
-xgboost
+# Core data
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.0
 
+# Models
+xgboost==2.1.0
+lightgbm==4.3.0
+lifelines==0.29.0
 
 # Explainability
-shap
+shap==0.45.0
 
-# API Serving
-bentoml
-pydantic
+# API
+fastapi==0.111.0
+uvicorn==0.30.0
+pydantic==2.7.0
 
-# MLOps & Orchestration
-apache-airflow
-evidently
-requests
-beautifulsoup4
+# MLflow
+mlflow==2.13.0
 
-# Jupyter Integration
-ipykernel
-
-lifelines
+# Utilities
+joblib==1.4.2
+requests==2.32.0
