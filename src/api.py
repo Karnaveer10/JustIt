@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import joblib
@@ -24,12 +25,26 @@ type_map = joblib.load(os.path.join(BASE_DIR, 'models', 'type_map.pkl'))
 # Lookups
 court_lookup = pd.read_csv(os.path.join(BASE_DIR, 'data', 'lookups', 'court_lookup.csv'))
 court_lookup = court_lookup.set_index(['state_code', 'dist_code', 'court_no'])
+court_key = pd.read_csv(os.path.join(BASE_DIR, 'data', 'lookups', 'court_key.csv'))
 
 GLOBAL_MEDIAN = 293.0
 GLOBAL_PENDING = 16039.0
 
 app = FastAPI(title="JusticeIQ", 
               description="Predict commercial dispute resolution timelines")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8080",
+        "http://127.0.0.1:8080",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 FEATURE_COLS = [
     'state_code', 'dist_code', 'court_no',
@@ -144,20 +159,47 @@ def predict(case: CaseInput):
     }
     
 # Add this to src/api.py
-
 @app.get("/courts/{state_code}/{dist_code}")
 def get_courts(state_code: int, dist_code: int):
-    try:
-        courts = court_lookup.loc[(state_code, dist_code)]
-        return {
-            "state_code": state_code,
-            "dist_code": dist_code,
-            "courts": courts.reset_index().to_dict(orient='records')
-        }
-    except KeyError:
+    # Get court names from court_key
+    filtered = court_key[
+        (court_key['state_code'] == state_code) & 
+        (court_key['dist_code'] == dist_code)
+    ][['court_no', 'court_name']].drop_duplicates()
+
+    if filtered.empty:
         return {"state_code": state_code, "dist_code": dist_code, "courts": []}
+
+    # Merge with performance stats from court_lookup
+    try:
+        stats = court_lookup.loc[(state_code, dist_code)].reset_index()
+    except KeyError:
+        stats = pd.DataFrame(columns=['court_no', 
+                                      'court_historical_median_resolution', 
+                                      'pending_cases_count'])
+
+    result = filtered.merge(stats, on='court_no', how='left')
+    result['court_historical_median_resolution'] = result[
+        'court_historical_median_resolution'].fillna(GLOBAL_MEDIAN)
+    result['pending_cases_count'] = result[
+        'pending_cases_count'].fillna(GLOBAL_PENDING)
+
+    return {
+        "state_code": state_code,
+        "dist_code": dist_code,
+        "courts": result[['court_no', 'court_name',
+                          'court_historical_median_resolution',
+                          'pending_cases_count']].to_dict(orient='records')
+    }
+
+@app.get("/districts/{state_code}")
+def get_districts(state_code: int):
+    filtered = court_key[court_key['state_code'] == state_code][
+        ['dist_code', 'district_name']
+    ].drop_duplicates()
+    return {"districts": filtered.to_dict(orient='records')}
 
 @app.get("/states")
 def get_states():
-    states = [{"code": k, "name": v} for k, v in state_map.items()]
-    return {"states": states}
+    filtered = court_key[['state_code', 'state_name']].drop_duplicates()
+    return {"states": filtered.to_dict(orient='records')}
