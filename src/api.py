@@ -40,6 +40,8 @@ app.add_middleware(
         "http://127.0.0.1:8080",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://justice-iq-predictor.vercel.app", # Your main clean link
+        "https://justice-iq-predictor-git-main-karnaveer10s-projects.vercel.app", # The preview link throwing the error
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -203,3 +205,11 @@ def get_districts(state_code: int):
 def get_states():
     filtered = court_key[['state_code', 'state_name']].drop_duplicates()
     return {"states": filtered.to_dict(orient='records')}
+type_clean = pd.read_csv(os.path.join(BASE_DIR, 'data', 'lookups', 'type_clean.csv'))
+
+@app.get("/case-types")
+def get_case_types():
+    commercial_types = type_clean[type_clean['is_commercial'] == True]
+    return {
+        "case_types": commercial_types[['type_name', 'type_canonical']].to_dict(orient='records')
+    }
