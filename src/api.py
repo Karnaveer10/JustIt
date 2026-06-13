@@ -1,3 +1,5 @@
+from urllib import response
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -5,12 +7,16 @@ from typing import Optional
 import joblib
 import pandas as pd
 import numpy as np
-
+import requests
+import json
+import re
+from fastapi import HTTPException
 # ── Load models once at startup ───────────────────────────
 import os
-
+from dotenv import load_dotenv
 # Base directory — works both locally and in Docker
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv()
 
 # Models
 m1 = joblib.load(os.path.join(BASE_DIR, 'models', 'stage1_binary.pkl'))
@@ -54,7 +60,8 @@ FEATURE_COLS = [
     'filing_year', 'filing_quarter',
     'court_historical_median_resolution', 'pending_cases_count'
 ]
-
+class ClassificationInput(BaseModel):
+    description: str
 # ── Request schema — only what user knows ─────────────────
 class CaseInput(BaseModel):
     state_code: int
@@ -64,7 +71,99 @@ class CaseInput(BaseModel):
     type_name: float
     filing_year: int
     filing_quarter: int
+def classify_case(description: str):
+    allowed_types = type_clean[
+        type_clean["is_commercial"] == True
+    ][["type_name", "type_canonical"]]
 
+    caseTypesListContext = (
+        allowed_types
+        .apply(
+            lambda r: f'ID: {r["type_name"]} | Label: "{r["type_canonical"]}"',
+            axis=1
+        )
+        .tolist()
+    )
+    caseTypesListContext = "\n".join(caseTypesListContext)
+
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        raise Exception("OPENROUTER_API_KEY missing")
+
+    response = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
+        json={
+            "model": "openai/gpt-oss-120b:free",
+            "temperature": 0,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": f"""You are an automated legal intake classification worker.
+
+Your objective is to classify a plain-English dispute into EXACTLY ONE allowed case type.
+
+Available System Categories:
+{caseTypesListContext}
+
+CLASSIFICATION RULES:
+
+1. Select exactly ONE code from the list.
+2. Match the PRIMARY legal dispute — not the remedy.
+3. Prefer specific legal categories over broad categories.
+4. Use broad categories only if no narrower category exists.
+5. If multiple disputes appear, choose the dominant legal issue.
+
+Examples:
+- Bounced cheque → cheque dishonour / negotiable instruments
+- Trademark misuse → trademark / intellectual property
+- Tenant refusing to vacate → tenancy / eviction
+- Unpaid invoice → money suit
+
+OUTPUT RULES:
+- Return RAW JSON only
+- No markdown
+- No extra text
+
+Output schema:
+{{
+"code": 3983,
+"label": "money suit",
+"reasoning": "Short explanation of why this category was selected."
+}}"""
+                },
+                {
+                    "role": "user",
+                    "content": f'Classify this dispute:"{description}"\nReturn the closest allowed legal category.'
+                }
+            ]
+        },
+        timeout=30
+    )
+
+   
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail=response.text)
+
+    result = response.json()
+    content = result["choices"][0]["message"]["content"]
+    content = re.sub(r"^```json|```$", "", content.strip(), flags=re.MULTILINE).strip()
+    parsed = json.loads(content)
+
+    matched = allowed_types[allowed_types["type_name"] == int(parsed["code"])]
+
+    if matched.empty:
+        raise HTTPException(400, "Invalid case type")
+
+    return {
+        "code": int(parsed["code"]),
+        "label": str(matched.iloc[0]["type_canonical"]),
+        "reasoning": parsed["reasoning"]
+    }
 # ── Court lookup ──────────────────────────────────────────
 def get_court_stats(state_code: int, dist_code: int, court_no: int):
     try:
@@ -213,3 +312,18 @@ def get_case_types():
     return {
         "case_types": commercial_types[['type_name', 'type_canonical']].to_dict(orient='records')
     }
+import traceback
+from fastapi import HTTPException
+
+@app.post("/classify")
+def classify(input: ClassificationInput):
+    try:
+        return classify_case(input.description)
+
+    except Exception as e:
+        traceback.print_exc()
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )

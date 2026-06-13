@@ -5,3 +5,5 @@ data/processed/*.csv
 *.tar.gz
 __pycache__/
 *.pyc
+.env
+src/.env
