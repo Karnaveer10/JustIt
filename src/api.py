@@ -97,7 +97,7 @@ def classify_case(description: str):
             "Authorization": f"Bearer {api_key}",
         },
         json={
-            "model": "openai/gpt-oss-120b:free",
+            "model": "openai/gpt-oss-20b:free",
             "temperature": 0,
             "messages": [
                 {
